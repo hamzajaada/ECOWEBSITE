@@ -7,7 +7,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-@WebServlet("/Register")
+import java.io.PrintWriter;
+
+@WebServlet( urlPatterns = "/Register" , name = "Register")
 public class RegisterServlet extends HttpServlet {
     public RegisterServlet() {
         super();
@@ -15,12 +17,19 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        this.getServletContext().getRequestDispatcher("View/Register.html").forward(req,resp);
+
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+        PrintWriter out = resp.getWriter();
+        resp.setContentType("text/html");
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        String confpass = req.getParameter("confirmPassword");
+        out.println("le username est ="+username);
+        out.println("le password est ="+password);
+        out.println("le confpass est ="+confpass);
     }
 
     @Override
