@@ -12,7 +12,6 @@ public class Main {
             try {
                 // Vous pouvez ajouter ici le code pour effectuer des opérations sur la base de données
                 // ...
-
                 // Fermer la connexion lorsque vous avez terminé
                 connection.close();
                 System.out.println("Connexion fermée avec succès!");

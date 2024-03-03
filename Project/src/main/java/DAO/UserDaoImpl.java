@@ -2,6 +2,7 @@ package DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserDaoImpl implements UserDao {
@@ -29,6 +30,30 @@ public class UserDaoImpl implements UserDao {
             }
         } else {
             System.out.println("Connection to database failed.");
+        }
+    }
+
+    @Override
+    public boolean login(String username, String password) {
+        Connection con = DbConnection.getConnexion();
+        if (con != null) {
+            System.out.println("connected!!!");
+        } else {
+            System.out.println("erreur de connection");
+
+            return false;
+        }
+
+        String req = "SELECT * FROM USER WHERE nom = ? AND password = ?";
+        try (PreparedStatement stm = con.prepareStatement(req)) {
+            stm.setString(1, username);
+            stm.setString(2, password);
+            try (ResultSet rs = stm.executeQuery()) {
+                return rs.next(); // Si le résultat de la requête n'est pas vide, les informations de connexion sont correctes.
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }
