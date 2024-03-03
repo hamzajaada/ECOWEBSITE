@@ -4,10 +4,7 @@
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
          version="5.0">
     <welcome-file-list>
-<<<<<<< HEAD
-        <welcome-file>index.jsp</welcome-file>
-=======
-        <welcome-file>View/Login.html</welcome-file>
->>>>>>> 014c7a13ade2f17940f39d846a24ed4619cd57d2
+        <!--<welcome-file>View/Login.html</welcome-file>-->
+        <welcome-file>View/Choix.html</welcome-file>
     </welcome-file-list>
 </web-app>
