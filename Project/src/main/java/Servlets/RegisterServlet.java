@@ -1,5 +1,8 @@
 package Servlets;
 
+import DAO.User;
+import DAO.UserDao;
+import DAO.UserDaoImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -30,6 +33,18 @@ public class RegisterServlet extends HttpServlet {
         out.println("le username est ="+username);
         out.println("le password est ="+password);
         out.println("le confpass est ="+confpass);
+        UserDao userDao = new UserDaoImpl();
+        User newUser = new User();
+        newUser.setNom(username);
+        newUser.setPassword(password);
+
+        // Vérifier si les mots de passe correspondent
+        if (password.equals(confpass)) {
+            userDao.addUser(newUser);
+            resp.getWriter().println("Utilisateur ajouté avec succès!");
+        } else {
+            resp.getWriter().println("Les mots de passe ne correspondent pas.");
+        }
     }
 
     @Override
