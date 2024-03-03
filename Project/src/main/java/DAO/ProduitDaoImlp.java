@@ -3,10 +3,13 @@ package DAO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProduitDaoImlp implements ProduitDao {
+
+    public ProduitDaoImlp(){}
 
     private static Connection con;
     private PreparedStatement stm;
@@ -29,6 +32,17 @@ public class ProduitDaoImlp implements ProduitDao {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return produits;
     }
