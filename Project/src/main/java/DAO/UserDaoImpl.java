@@ -49,6 +49,7 @@ public class UserDaoImpl implements UserDao {
             stm.setString(1, username);
             stm.setString(2, password);
             try (ResultSet rs = stm.executeQuery()) {
+                System.out.println("test");
                 return rs.next(); // Si le résultat de la requête n'est pas vide, les informations de connexion sont correctes.
             }
         } catch (SQLException e) {
