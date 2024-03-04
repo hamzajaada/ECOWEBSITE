@@ -33,8 +33,8 @@ public class LoginServlet extends HttpServlet {
         User newUser = new User();
         boolean result = userDao.login(username,password);
         if(result){
-          out.println("done!");
-           req.getRequestDispatcher("Home.html").forward(req,resp);
+            out.println("done!");
+            req.getRequestDispatcher("Home").forward(req,resp);
         }
         else{
            req.getRequestDispatcher("Login.html").forward(req,resp);
