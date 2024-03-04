@@ -47,9 +47,8 @@ public class PanierServlet extends HttpServlet {
         out.println("<meta charset=\"UTF-8\">");
         out.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
         out.println("<title>Page de choix</title>");
-        out.println("<style>");
-        // CSS styles here (copied from the provided HTML)
-        out.println("</style>");
+
+        out.println("<link rel='stylesheet' type='text/css' href='View/Css/Panierstyle.css'>");
         out.println("</head>");
         out.println("<body>");
         out.println("<div class=\"container\">");
@@ -76,10 +75,15 @@ public class PanierServlet extends HttpServlet {
         out.println("<h2>Votre panier contient : " + nombreArticles + " disques</h2>");
 
         // Links for further actions
-        out.println("<a href=\"#\">Vous pouvez commander un autre disque</a>");
-        // Bouton pour enregistrer la commande
-        out.println("<form action=\"Commande\" method=\"post\">");
-        out.println("   <button type=\"submit\">Enregistrer votre commande</button>");
+
+        out.println("<div class ='div'>");
+
+        // Balise <a>
+        out.println("<a class='custom-link' href='#'>Vous pouvez commander un autre disque</a>");
+
+        // Formulaire
+        out.println("<form action='Commande' method='post'>");
+        out.println("   <button type='submit'>Enregistrer votre commande</button>");
         out.println("</form>");
 
         out.println("</div>");
