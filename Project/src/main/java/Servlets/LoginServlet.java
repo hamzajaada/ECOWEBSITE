@@ -5,9 +5,7 @@ import DAO.UserDao;
 import DAO.UserDaoImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,13 +30,26 @@ public class LoginServlet extends HttpServlet {
         UserDao userDao = new UserDaoImpl();
         User newUser = new User();
         boolean result = userDao.login(username,password);
-        if(result){
-            out.println("done!");
-            req.getRequestDispatcher("Home").forward(req,resp);
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("username")) {
+                    String storedUsername = cookie.getValue();
+                    if (storedUsername.equals(username)) {
+                        HttpSession session = req.getSession(true);
+                        session.setAttribute("nom", username);
+                        resp.sendRedirect(req.getContextPath() + "/Home");
+                    }
+                } else if (cookie.getName().equals("password")) {
+                    String storedPassword = cookie.getValue();
+                    if (storedPassword.equals(password)) {
+                        out.println("Mot de passe correct");
+
+                    }
+                }
+            }
         }
-        else{
-           req.getRequestDispatcher("Login.html").forward(req,resp);
-        }
+
 
     }
 

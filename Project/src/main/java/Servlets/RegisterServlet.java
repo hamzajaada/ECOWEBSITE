@@ -5,6 +5,7 @@ import DAO.UserDao;
 import DAO.UserDaoImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,18 +34,12 @@ public class RegisterServlet extends HttpServlet {
         out.println("le username est ="+username);
         out.println("le password est ="+password);
         out.println("le confpass est ="+confpass);
-        UserDao userDao = new UserDaoImpl();
-        User newUser = new User();
-        newUser.setNom(username);
-        newUser.setPassword(password);
+        Cookie usernameCookie = new Cookie("username", username);
+        resp.addCookie(usernameCookie);
+        Cookie passwordCookie = new Cookie("password", password);
+        resp.addCookie(passwordCookie);
+        resp.sendRedirect(req.getContextPath() + "/");
 
-        // Vérifier si les mots de passe correspondent
-        if (password.equals(confpass)) {
-            userDao.addUser(newUser);
-            resp.getWriter().println("Utilisateur ajouté avec succès!");
-        } else {
-            resp.getWriter().println("Les mots de passe ne correspondent pas.");
-        }
     }
 
     @Override
