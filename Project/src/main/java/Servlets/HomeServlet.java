@@ -116,7 +116,7 @@ public class HomeServlet extends HttpServlet {
             out.println("<td>" + produit.getNom_produit() + "</td>");
             out.println("<td>" + produit.getPrix() + " Euros</td>");
             out.println("<td>");
-            out.println("<form action=\"CommandeProduit\" method=\"post\">"); // <-- Action updated here
+            out.println("<form action=\"\" method=\"post\">"); // <-- Action updated here
             out.println("<input type=\"hidden\" name=\"id_prod\" value=\"" + produit.getId() + "\">");
             out.println("<input type=\"submit\" value=\"Ajouter au panier\">");
             out.println("</form></td>");
