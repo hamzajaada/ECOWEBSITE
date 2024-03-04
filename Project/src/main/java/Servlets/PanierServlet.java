@@ -53,8 +53,6 @@ public class PanierServlet extends HttpServlet {
         out.println("<body>");
         out.println("<div class=\"container\">");
         out.println("<h1>Bienvenue <span id=\"nom_personne\">" + Nom +"</span>, dans ma servlet d'achat</h1>");
-        out.println("<h2>(Votre panier)</h2>");
-
         // Table of ordered discs
         out.println("<table>");
         out.println("<thead>");

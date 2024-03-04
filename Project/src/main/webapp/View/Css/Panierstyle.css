@@ -24,7 +24,9 @@ h3 {
     color: #555;
     text-align: center;
 }
-
+h2{
+    text-align: center;
+}
 table {
     width: 100%;
     border-collapse: collapse;
@@ -56,4 +58,14 @@ button:hover {
 .div{
     display: flex;
     justify-content: space-around;
+}
+.custom-link {
+    text-decoration: none;
+    color: #3498db;
+    font-weight: bold;
+    font-family: 'Helvetica', sans-serif;
+    padding: 8px 12px;
+    border-radius: 5px;
+    background-color: #ecf0f1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
