@@ -1,5 +1,6 @@
 package Servlets;
 
+import DAO.Produit;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,23 +20,15 @@ public class PanierServlet extends HttpServlet {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
 
-        // Récupérer la session ou en créer une nouvelle
         HttpSession session = request.getSession(true);
 
-        // Récupérer le panier depuis la session ou initialiser un nouveau panier
-        List<String> panier = (List<String>) session.getAttribute("panier");
+        List<Produit> panier = (List<Produit>) session.getAttribute("panier");
         if (panier == null) {
-            panier = new ArrayList<>();
-            // Ajouter des articles au panier (pour l'exemple)
-            panier.add("Disque CD - AMOR TICINES 15 Euros");
-            panier.add("Disque CD - AMOR TICINES 15 Euros");
-            panier.add("Disque CD - AMOR TICINES 15 Euros");
-            panier.add("Disque CD - AMOR TICINES 15 Euros");
+            out.println("le panier est vide");
         }
 
         // Stocker le panier mis à jour dans la session
         session.setAttribute("panier", panier);
-        System.out.println("panier hhhh : "+panier.toString());
 
         String Nom = (String) session.getAttribute("nom");
 
@@ -63,10 +56,9 @@ public class PanierServlet extends HttpServlet {
         out.println("</thead>");
         out.println("<tbody>");
         // Afficher les articles du panier
-        for (String article : panier) {
-            System.out.println("panier id : "+article);
+        for (Produit article : panier) {
             out.println("<tr>");
-            out.println("<td>" + article + "</td>");
+            out.println("<td>" + article.getNom_produit() + "</td>");
             out.println("</tr>");
         }
         out.println("</tbody>");
@@ -79,10 +71,10 @@ public class PanierServlet extends HttpServlet {
         out.println("<div class ='div'>");
 
         // Balise <a>
-        out.println("<a class='custom-link' href='#'>Vous pouvez commander un autre disque</a>");
+        out.println("<a class='custom-link' href='/Project_war_exploded/Home'>Vous pouvez commander un autre disque</a>");
 
         // Formulaire
-        out.println("<form action='' method='post'>");
+        out.println("<form action='Commande' method='post'>");
         out.println("   <button type='submit'>Enregistrer votre commande</button>");
         out.println("</form>");
 
@@ -93,8 +85,6 @@ public class PanierServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession(true);
-        List<Integer> panier = (List<Integer>) session.getAttribute("panier");
-        System.out.println(panier.toString());
+
     }
 }

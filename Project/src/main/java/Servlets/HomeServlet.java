@@ -1,3 +1,4 @@
+package Servlets;
 import DAO.Produit;
 import DAO.ProduitDaoImlp;
 import jakarta.servlet.ServletException;
