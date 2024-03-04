@@ -1,3 +1,5 @@
+package Servlets;
+
 import DAO.Produit;
 import DAO.ProduitDaoImlp;
 import jakarta.servlet.ServletException;
@@ -20,6 +22,8 @@ public class HomeServlet extends HttpServlet {
 
         HttpSession session = request.getSession(true);
 
+        List<Produit> panier = (List<Produit>) session.getAttribute("panier");
+
         String Nom = (String) session.getAttribute("nom");
 
         // Get products from the database
@@ -32,69 +36,7 @@ public class HomeServlet extends HttpServlet {
         out.println("<meta charset=\"UTF-8\">");
         out.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
         out.println("<title>Page de produits</title>");
-        out.println("<style>");
-        out.println("body {");
-        out.println("    font-family: Arial, sans-serif;");
-        out.println("    background-color: #f4f4f4;");
-        out.println("    margin: 0;");
-        out.println("    padding: 0;");
-        out.println("}");
-
-        out.println(".container {");
-        out.println("    width: 80%;");
-        out.println("    margin: 0 auto;");
-        out.println("    padding: 20px;");
-        out.println("    background-color: #fff;");
-        out.println("    border-radius: 5px;");
-        out.println("    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);");
-        out.println("}");
-
-        out.println("h1, h3 {");
-        out.println("    color: #333;");
-        out.println("}");
-
-        out.println("table {");
-        out.println("    width: 100%;");
-        out.println("    border-collapse: collapse;");
-        out.println("    margin-top: 20px;");
-        out.println("}");
-
-        out.println("th, td {");
-        out.println("    padding: 10px;");
-        out.println("    text-align: left;");
-        out.println("    border-bottom: 1px solid #ddd;");
-        out.println("}");
-
-        out.println("th {");
-        out.println("    background-color: #f2f2f2;");
-        out.println("    font-weight: bold;");
-        out.println("}");
-
-        out.println("input[type=\"submit\"] {");
-        out.println("    padding: 8px 15px;");
-        out.println("    background-color: #4CAF50;");
-        out.println("    color: white;");
-        out.println("    border: none;");
-        out.println("    border-radius: 4px;");
-        out.println("    cursor: pointer;");
-        out.println("    transition: background-color 0.3s;");
-        out.println("}");
-
-        out.println("input[type=\"submit\"]:hover {");
-        out.println("    background-color: #45a049;");
-        out.println("}");
-
-        out.println("a {");
-        out.println("    display: inline-block;");
-        out.println("    margin-top: 10px;");
-        out.println("    text-decoration: none;");
-        out.println("    color: #007bff;");
-        out.println("}");
-
-        out.println("a:hover {");
-        out.println("    text-decoration: underline;");
-        out.println("}");
-        out.println("</style>");
+        out.println("<link rel='stylesheet' type='text/css' href='View/Css/Homestyle.css'>");
         out.println("</head>");
         out.println("<body>");
         out.println("<div class=\"container\">");
@@ -112,16 +54,33 @@ public class HomeServlet extends HttpServlet {
 
         // Iterate over products and generate table rows
         for (Produit produit : produits) {
-            out.println("<tr>");
-            out.println("<td>" + produit.getNom_produit() + "</td>");
-            out.println("<td>" + produit.getPrix() + " Euros</td>");
-            out.println("<td>");
-            out.println("<form action=\"CommandeProduit\" method=\"post\">"); // <-- Action updated here
-            out.println("<input type=\"hidden\" name=\"id_prod\" value=\"" + produit.getId() + "\">");
-            out.println("<input type=\"submit\" value=\"Ajouter au panier\">");
-            out.println("</form></td>");
-
-            out.println("</tr>");
+            if(panier != null && isInPanier(produit, panier)) {
+                // Produit déjà dans le panier
+                out.println("<tr>");
+                out.println("<td>" + produit.getNom_produit() + "</td>");
+                out.println("<td>" + produit.getPrix() + " Euros</td>");
+                out.println("<td>");
+                out.println("<form action=\"\" method=\"delete\">");
+                out.println("<input type=\"hidden\" name=\"id_prod\" value=\"" + produit.getId() + "\">");
+                out.println("<input type=\"hidden\" name=\"nom_prod\" value=\"" + produit.getNom_produit() + "\">");
+                out.println("<input type=\"hidden\" name=\"prix_prod\" value=\"" + produit.getPrix() + "\">");
+                out.println("<input type=\"submit\" value=\"Enlever du panier\">");
+                out.println("</form></td>");
+                out.println("</tr>");
+            } else {
+                // Produit non encore ajouté au panier
+                out.println("<tr>");
+                out.println("<td>" + produit.getNom_produit() + "</td>");
+                out.println("<td>" + produit.getPrix() + " Euros</td>");
+                out.println("<td>");
+                out.println("<form action=\"\" method=\"post\">");
+                out.println("<input type=\"hidden\" name=\"id_prod\" value=\"" + produit.getId() + "\">");
+                out.println("<input type=\"hidden\" name=\"nom_prod\" value=\"" + produit.getNom_produit() + "\">");
+                out.println("<input type=\"hidden\" name=\"prix_prod\" value=\"" + produit.getPrix() + "\">");
+                out.println("<input type=\"submit\" value=\"Ajouter au panier\">");
+                out.println("</form></td>");
+                out.println("</tr>");
+            }
         }
 
         out.println("</tbody>");
@@ -133,27 +92,61 @@ public class HomeServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Récupérer le paramètre identifiant le produit à commander
-        int productId = Integer.parseInt(request.getParameter("id_prod"));
-        System.out.println("produit id : " + productId);
+        String idString = request.getParameter("id_prod");
+        int productId = (idString != null && !idString.isEmpty()) ? Integer.parseInt(idString) : 0;
+        String productNom = request.getParameter("nom_prod");
+        String prixString = request.getParameter("prix_prod");
+        float productPrix = (prixString != null && !prixString.isEmpty()) ? Float.parseFloat(prixString) : 0.0f;
 
-        // Récupérer la session ou en créer une nouvelle
+        Produit p = new Produit(productId, productNom, productPrix);
         HttpSession session = request.getSession(true);
 
-        // Récupérer le panier depuis la session ou initialiser un nouveau panier
-        List<Integer> panier = (List<Integer>) session.getAttribute("panier");
+        List<Produit> panier = (List<Produit>) session.getAttribute("panier");
+        if (panier == null) {
+            panier = new ArrayList<>();
+        }
+        panier.add(p);
+
+        session.setAttribute("panier", panier);
+        System.out.println("Le panier : "+panier.toString());
+
+        response.sendRedirect(request.getContextPath() + "/Home");
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String idString = req.getParameter("id_prod");
+        int Id = (idString != null && !idString.isEmpty()) ? Integer.parseInt(idString) : 0;
+        String Nom = req.getParameter("nom_prod");
+        String prixString = req.getParameter("prix_prod");
+        float Prix = (prixString != null && !prixString.isEmpty()) ? Float.parseFloat(prixString) : 0.0f;
+
+        Produit p = new Produit(Id, Nom, Prix);
+
+        HttpSession session = req.getSession(true);
+
+        List<Produit> panier = (List<Produit>) session.getAttribute("panier");
         if (panier == null) {
             panier = new ArrayList<>();
         }
 
-        // Ajouter le produit au panier
-        panier.add(productId);
+        panier.remove(p);
 
-        // Mettre à jour la session avec le panier mis à jour
         session.setAttribute("panier", panier);
         System.out.println("Le panier : "+panier.toString());
 
-        // Rediriger l'utilisateur vers la servlet PanierServlet
-        response.sendRedirect(request.getContextPath() + "/Home");
+        resp.sendRedirect(req.getContextPath() + "/Home");
+    }
+
+
+    private boolean isInPanier(Produit produit, List<Produit> panier) {
+        if (panier != null && !panier.isEmpty()) {
+            for (Produit p : panier) {
+                if (p.getId() == produit.getId()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

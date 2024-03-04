@@ -1,5 +1,6 @@
 package Servlets;
 
+import DAO.Produit;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,18 +20,11 @@ public class PanierServlet extends HttpServlet {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
 
-        // Récupérer la session ou en créer une nouvelle
         HttpSession session = request.getSession(true);
 
-        // Récupérer le panier depuis la session ou initialiser un nouveau panier
-        List<String> panier = (List<String>) session.getAttribute("panier");
+        List<Produit> panier = (List<Produit>) session.getAttribute("panier");
         if (panier == null) {
-            panier = new ArrayList<>();
-            // Ajouter des articles au panier (pour l'exemple)
-            panier.add("Disque CD - AMOR TICINES 15 Euros");
-            panier.add("Disque CD - AMOR TICINES 15 Euros");
-            panier.add("Disque CD - AMOR TICINES 15 Euros");
-            panier.add("Disque CD - AMOR TICINES 15 Euros");
+            out.println("le panier est vide");
         }
 
         // Stocker le panier mis à jour dans la session
@@ -64,9 +58,9 @@ public class PanierServlet extends HttpServlet {
         out.println("</thead>");
         out.println("<tbody>");
         // Afficher les articles du panier
-        for (String article : panier) {
+        for (Produit article : panier) {
             out.println("<tr>");
-            out.println("<td>" + article + "</td>");
+            out.println("<td>" + article.getNom_produit() + "</td>");
             out.println("</tr>");
         }
         out.println("</tbody>");
@@ -79,7 +73,7 @@ public class PanierServlet extends HttpServlet {
         out.println("<div class ='div'>");
 
         // Balise <a>
-        out.println("<a class='custom-link' href='#'>Vous pouvez commander un autre disque</a>");
+        out.println("<a class='custom-link' href='/Project_war_exploded/Home'>Vous pouvez commander un autre disque</a>");
 
         // Formulaire
         out.println("<form action='Commande' method='post'>");
