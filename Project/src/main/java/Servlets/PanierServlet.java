@@ -77,7 +77,7 @@ public class PanierServlet extends HttpServlet {
 
         // Formulaire
         out.println("<form action='Panier' method='post'>");
-        out.println("   <button type='submit'>Enregistrer votre commande</button>");
+        out.println("   <button type='submit'>Enregister votre commande</button>");
         out.println("</form>");
 
         out.println("</div>");
@@ -90,19 +90,23 @@ public class PanierServlet extends HttpServlet {
         HttpSession session = req.getSession(true);
         List<Produit> panier = (List<Produit>) session.getAttribute("panier");
         String Nom = (String) session.getAttribute("nom");
+
         System.out.println("le nom de utilisateur est :"+Nom);
         System.out.println("Le panier de Ser :"+panier.toString());
-        resp.sendRedirect(req.getContextPath() + "/Panier");
         int somme =0 ;
         for (Produit article : panier){
             somme = somme + (int) article.getPrix();
         }
         System.out.println("Le prix total :"+somme);
+
         Commande c = new Commande();
         c.setNom_user(Nom);
         c.setNom_prod(panier.toString());
         c.setPrix_total(somme);
         CommandeDaoImpl CD = new CommandeDaoImpl();
         CD.AddCommande(c);
+
+        resp.sendRedirect(req.getContextPath() + "/Commande");
+
     }
 }

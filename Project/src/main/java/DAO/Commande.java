@@ -48,4 +48,14 @@ public class Commande {
     public void setPrix_total(int prix_total) {
         this.prix_total = prix_total;
     }
+
+    @Override
+    public String toString() {
+        return "Commande{" +
+                "id=" + id +
+                ", nom_user='" + nom_user + '\'' +
+                ", nom_prod='" + nom_prod + '\'' +
+                ", prix_total=" + prix_total +
+                '}';
+    }
 }
