@@ -1,8 +1,6 @@
 CREATE TABLE commande (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    id_utilisateur INT,
-    id_produit INT,
-    quantite INT,
-    FOREIGN KEY (id_utilisateur) REFERENCES user(id),
-    FOREIGN KEY (id_produit) REFERENCES produit(id)
+                          id INT PRIMARY KEY AUTO_INCREMENT,
+                          Nom_utilisateur VARCHAR(255),
+                          Nom_produits VARCHAR(255),
+                          Prix_total NUMERIC(10, 2)
 );
