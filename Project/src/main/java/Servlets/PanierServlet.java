@@ -1,5 +1,7 @@
 package Servlets;
 
+import DAO.Commande;
+import DAO.CommandeDaoImpl;
 import DAO.Produit;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -74,7 +76,7 @@ public class PanierServlet extends HttpServlet {
         out.println("<a class='custom-link' href='/Project_war_exploded/Home'>Vous pouvez commander un autre disque</a>");
 
         // Formulaire
-        out.println("<form action='Commande' method='post'>");
+        out.println("<form action='Panier' method='post'>");
         out.println("   <button type='submit'>Enregistrer votre commande</button>");
         out.println("</form>");
 
@@ -85,6 +87,22 @@ public class PanierServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        HttpSession session = req.getSession(true);
+        List<Produit> panier = (List<Produit>) session.getAttribute("panier");
+        String Nom = (String) session.getAttribute("nom");
+        System.out.println("le nom de utilisateur est :"+Nom);
+        System.out.println("Le panier de Ser :"+panier.toString());
+        resp.sendRedirect(req.getContextPath() + "/Panier");
+        int somme =0 ;
+        for (Produit article : panier){
+            somme = somme + (int) article.getPrix();
+        }
+        System.out.println("Le prix total :"+somme);
+        Commande c = new Commande();
+        c.setNom_user(Nom);
+        c.setNom_prod(panier.toString());
+        c.setPrix_total(somme);
+        CommandeDaoImpl CD = new CommandeDaoImpl();
+        CD.AddCommande(c);
     }
 }

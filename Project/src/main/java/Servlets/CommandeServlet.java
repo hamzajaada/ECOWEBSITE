@@ -66,6 +66,6 @@ public class CommandeServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // Traitement de la requête POST
+
     }
 }
