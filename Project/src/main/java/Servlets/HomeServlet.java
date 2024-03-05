@@ -60,7 +60,7 @@ public class HomeServlet extends HttpServlet {
                 out.println("<td>" + produit.getNom_produit() + "</td>");
                 out.println("<td>" + produit.getPrix() + " Euros</td>");
                 out.println("<td>");
-                out.println("<form action=\"\" method=\"delete\">");
+                out.println("<form action=\"\" method=\"post\">");
                 out.println("<input type=\"hidden\" name=\"id_prod\" value=\"" + produit.getId() + "\">");
                 out.println("<input type=\"hidden\" name=\"nom_prod\" value=\"" + produit.getNom_produit() + "\">");
                 out.println("<input type=\"hidden\" name=\"prix_prod\" value=\"" + produit.getPrix() + "\">");
@@ -85,6 +85,27 @@ public class HomeServlet extends HttpServlet {
 
         out.println("</tbody>");
         out.println("</table>");
+
+        out.println("<script>");
+        out.println("function deleteItem(event) {");
+        out.println("    event.preventDefault();");
+        out.println("    var form = event.target.form;");
+        out.println("    var formData = new FormData(form);");
+        out.println("    fetch(form.action, {");
+        out.println("        method: 'POST',");
+        out.println("        body: formData");
+        out.println("    }).then(response => {");
+        out.println("        if (response.ok) {");
+        out.println("            window.location.reload(true);");
+        out.println("        } else {");
+        out.println("            console.error('Error removing item from cart');");
+        out.println("        }");
+        out.println("    }).catch(error => {");
+        out.println("        console.error('Error removing item from cart:', error);");
+        out.println("    });");
+        out.println("}");
+        out.println("</script>");
+
         out.println("</div>");
         out.println("</body>");
         out.println("</html>");
@@ -92,6 +113,12 @@ public class HomeServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String method = request.getParameter("_method");
+        if ("delete".equalsIgnoreCase(method)) {
+            doDelete(request, response);
+            return;
+        }
+
         String idString = request.getParameter("id_prod");
         int productId = (idString != null && !idString.isEmpty()) ? Integer.parseInt(idString) : 0;
         String productNom = request.getParameter("nom_prod");
