@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProduitDaoImlp implements ProduitDao {
+public class ProduitDaoImpl implements ProduitDao {
 
-    public ProduitDaoImlp(){}
+    public ProduitDaoImpl(){}
 
     private static Connection con;
     private PreparedStatement stm;

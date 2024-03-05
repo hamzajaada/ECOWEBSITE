@@ -1,7 +1,8 @@
 package Servlets;
 
 import DAO.Produit;
-import DAO.ProduitDaoImlp;
+
+import DAO.ProduitDaoImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,7 +14,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(urlPatterns = "/Home" , name = "Home")
+@WebServlet(urlPatterns = "/Home", name = "Home")
 public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -27,8 +28,8 @@ public class HomeServlet extends HttpServlet {
         String Nom = (String) session.getAttribute("nom");
 
         // Get products from the database
-        List<Produit> produits = new ProduitDaoImlp().getAllProduit();
-        System.out.println("liste de produit : " + produits.toString());
+        List<Produit> produits = new ProduitDaoImpl().getAllProduit();
+
 
         out.println("<!DOCTYPE html>");
         out.println("<html lang=\"en\">");
@@ -40,7 +41,7 @@ public class HomeServlet extends HttpServlet {
         out.println("</head>");
         out.println("<body>");
         out.println("<div class=\"container\">");
-        out.println("<h1>Bienvenue <span id=\"nom_personne\">" + Nom +"</span>, dans ma servlet d'achat</h1>");
+        out.println("<h1>Bienvenue <span id=\"nom_personne\">" + Nom + "</span>, dans ma servlet d'achat</h1>");
         out.println("<a href=\"/Project_war_exploded/Panier\">Voir votre carte</a>");
         out.println("<table>");
         out.println("<thead>");
@@ -52,28 +53,20 @@ public class HomeServlet extends HttpServlet {
         out.println("</thead>");
         out.println("<tbody>");
 
-        // Iterate over products and generate table rows
         for (Produit produit : produits) {
-            if(panier != null && isInPanier(produit, panier)) {
+            if (panier != null && isInPanier(produit, panier)) {
                 // Produit déjà dans le panier
                 out.println("<tr>");
                 out.println("<td>" + produit.getNom_produit() + "</td>");
                 out.println("<td>" + produit.getPrix() + " Euros</td>");
-                out.println("<td>");
-                out.println("<form action=\"\" method=\"post\">");
-                out.println("<input type=\"hidden\" name=\"id_prod\" value=\"" + produit.getId() + "\">");
-                out.println("<input type=\"hidden\" name=\"nom_prod\" value=\"" + produit.getNom_produit() + "\">");
-                out.println("<input type=\"hidden\" name=\"prix_prod\" value=\"" + produit.getPrix() + "\">");
-                out.println("<input type=\"submit\" value=\"Enlever du panier\">");
-                out.println("</form></td>");
+                out.println("<td>Déja choisi</td>");
                 out.println("</tr>");
             } else {
-                // Produit non encore ajouté au panier
                 out.println("<tr>");
                 out.println("<td>" + produit.getNom_produit() + "</td>");
                 out.println("<td>" + produit.getPrix() + " Euros</td>");
                 out.println("<td>");
-                out.println("<form action=\"\" method=\"post\">");
+                out.println("<form action=\"\" method=\"POST\">");
                 out.println("<input type=\"hidden\" name=\"id_prod\" value=\"" + produit.getId() + "\">");
                 out.println("<input type=\"hidden\" name=\"nom_prod\" value=\"" + produit.getNom_produit() + "\">");
                 out.println("<input type=\"hidden\" name=\"prix_prod\" value=\"" + produit.getPrix() + "\">");
@@ -86,26 +79,6 @@ public class HomeServlet extends HttpServlet {
         out.println("</tbody>");
         out.println("</table>");
 
-        out.println("<script>");
-        out.println("function deleteItem(event) {");
-        out.println("    event.preventDefault();");
-        out.println("    var form = event.target.form;");
-        out.println("    var formData = new FormData(form);");
-        out.println("    fetch(form.action, {");
-        out.println("        method: 'POST',");
-        out.println("        body: formData");
-        out.println("    }).then(response => {");
-        out.println("        if (response.ok) {");
-        out.println("            window.location.reload(true);");
-        out.println("        } else {");
-        out.println("            console.error('Error removing item from cart');");
-        out.println("        }");
-        out.println("    }).catch(error => {");
-        out.println("        console.error('Error removing item from cart:', error);");
-        out.println("    });");
-        out.println("}");
-        out.println("</script>");
-
         out.println("</div>");
         out.println("</body>");
         out.println("</html>");
@@ -113,57 +86,41 @@ public class HomeServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String method = request.getParameter("_method");
-        if ("delete".equalsIgnoreCase(method)) {
-            doDelete(request, response);
-            return;
-        }
-
         String idString = request.getParameter("id_prod");
         int productId = (idString != null && !idString.isEmpty()) ? Integer.parseInt(idString) : 0;
         String productNom = request.getParameter("nom_prod");
         String prixString = request.getParameter("prix_prod");
         float productPrix = (prixString != null && !prixString.isEmpty()) ? Float.parseFloat(prixString) : 0.0f;
-
         Produit p = new Produit(productId, productNom, productPrix);
-        HttpSession session = request.getSession(true);
 
+        HttpSession session = request.getSession(true);
         List<Produit> panier = (List<Produit>) session.getAttribute("panier");
         if (panier == null) {
             panier = new ArrayList<>();
+            session.setAttribute("panier", panier); // Initialiser et enregistrer la liste dans la session
         }
-        panier.add(p);
 
-        session.setAttribute("panier", panier);
-        System.out.println("Le panier : "+panier.toString());
+        panier.add(p);
 
         response.sendRedirect(request.getContextPath() + "/Home");
     }
 
-    @Override
+    /*@Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String idString = req.getParameter("id_prod");
         int Id = (idString != null && !idString.isEmpty()) ? Integer.parseInt(idString) : 0;
         String Nom = req.getParameter("nom_prod");
         String prixString = req.getParameter("prix_prod");
         float Prix = (prixString != null && !prixString.isEmpty()) ? Float.parseFloat(prixString) : 0.0f;
-
         Produit p = new Produit(Id, Nom, Prix);
-
         HttpSession session = req.getSession(true);
-
         List<Produit> panier = (List<Produit>) session.getAttribute("panier");
         if (panier == null) {
             panier = new ArrayList<>();
         }
-
         panier.remove(p);
-
-        session.setAttribute("panier", panier);
-        System.out.println("Le panier : "+panier.toString());
-
         resp.sendRedirect(req.getContextPath() + "/Home");
-    }
+    }*/
 
 
     private boolean isInPanier(Produit produit, List<Produit> panier) {
@@ -176,6 +133,4 @@ public class HomeServlet extends HttpServlet {
         }
         return false;
     }
-
-    // test to hamza
 }
